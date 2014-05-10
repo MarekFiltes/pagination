@@ -1,4 +1,5 @@
 var http = require("http");
+var port = Number(process.env.PORT || 5000);
 
 http.createServer(function (req, res) {
     if(req.url.match("^/orders$")){
@@ -50,8 +51,8 @@ http.createServer(function (req, res) {
         res.end();
     });
 
-}).listen(8080, '127.0.0.1', function () {
-    console.log("Server is running on 127.0.0.1:8080");
+}).listen(port, function () {
+    console.log("Server is running on port "+port);
 });
 
 var storage = {
