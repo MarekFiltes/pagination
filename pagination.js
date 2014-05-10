@@ -12,13 +12,13 @@ http.createServer(function (req, res) {
     if (id = req.url.match("^/orders([?])page([=])([0-9]+)([&])size([=])([0-9]+)$")) {
         if (req.method == "GET") {         
             console.log("GET /orders");
-            console.log(id[0]);
+            //console.log(id[0]);
 
             var page = id[3];
             var size = id[6];
             var numberOfItems = storage.getCountOfOrders();
 
-            var link = "<http://127.0.0.1:8080/orders?page=";
+            var link = "<http://" + req.headers.host + "/orders?page=";
             var link_first = link + "1" + "&size=" + size + ' rel="first">';
             var link_self = link + page + "&size=" + size + ' rel="self">';
             var link_next = link + (parseInt(page) + 1) + "&size=" + size + ' rel="next">';

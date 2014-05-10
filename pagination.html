@@ -7,7 +7,7 @@
         <script type="text/javascript">
             var xhr = new XMLHttpRequest();
             function getPages(page, size) {
-                var url = "http://127.0.0.1:8080/orders?page=" + page + "&size=" + size;
+                var url = "http://"+location.host + "/orders?page=" + page + "&size=" + size;
                 xhr.open("GET", url, true);
                 xhr.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
