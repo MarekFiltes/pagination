@@ -1,0 +1,93 @@
+<html>
+    <head>
+        <title>Pagination</title>
+        <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script type="text/javascript">
+            var xhr = new XMLHttpRequest();
+            function getPages(page, size) {
+                var url = "http://127.0.0.1:8080/orders?page=" + page + "&size=" + size;
+                xhr.open("GET", url, true);
+                xhr.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var links = this.getResponseHeader("Link").split(",");
+                        var data = JSON.parse(this.responseText);
+                        proccessResult(links, data);
+                    }
+                }
+                xhr.send();             
+            }
+            function listPage(uri) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", uri, true);
+                xhr.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {                      
+                        var links = this.getResponseHeader("Link").split(",");
+                        var data = JSON.parse(this.responseText);
+                        proccessResult(links, data);
+                    }
+                }
+                xhr.send();
+            }
+            function proccessResult(links, data) {
+                $("#resultDiv").empty();
+                $("<div id='link'>").appendTo("#resultDiv");
+
+                for (var j = 0; j < links.length; j++) {
+                    var link = links[j].replace("<", "").replace(">", "").split("rel=");
+                    var get = "listPage('"+link[0].replace(/( )/g, "")+"')";
+                    var text = link[1].substr(1, link[1].length - 2);                  
+                    $("<button class='button' onclick="+get+">" + text + "</button>").appendTo("#link");
+                    //document.getElementById("resultDiv").innerText += links[j];
+                    //$("</br>").appendTo("#resultDiv");
+                }
+                $("</div>").appendTo("#resultDiv");
+                $("<h2>Result</h2>").appendTo("#resultDiv");
+                $.each(data, function (idx, item) {
+                    $("<p class='order'><span class='id'>#" + item.id + "</span> <span class='price'>" + parseFloat(item.price).toFixed(2) + " $</span></p>").appendTo("#resultDiv");
+
+                });
+            }
+        </script>
+        <style>
+            .button {
+                width: 94px;
+                text-align: center;
+                text-transform:uppercase;
+            }
+                .button:hover {
+                    color:white;
+                    background-color:black;
+                }
+            .order {
+                margin: 15px;
+                float:left;
+                width: 150px;
+                padding: 15px;
+                border: outset 1px #8be4dc;
+                border-radius: 10px;
+                background: #8be4dc;                
+            }
+            .id {
+                font-family:Arial;
+                font-size: 16px;
+            }
+            .price {
+                float:right;
+                font-size: 20px;
+                font-family: Tahoma;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <label>Page</label><input id="inP" value="1" type="number" min="1" />
+            <label>Size</label><input id="inS" value="3" type="number" min="1" />
+            <button class="button" onclick="getPages(document.getElementById('inP').value,document.getElementById('inS').value)">GET</button>
+        </div>
+        <div id="resultDiv">
+
+        </div>
+    </body>
+</html>
